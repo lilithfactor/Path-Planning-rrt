@@ -1,2 +1,2 @@
-# erc_RTT
+# erc_RRT
 Repo for RTT Algorithm, ERC Inductions.
