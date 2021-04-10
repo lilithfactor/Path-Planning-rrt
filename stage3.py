@@ -25,14 +25,6 @@ class Node:
         self.newNode = newNode
         self.position = position
 
-    # parent is a node
-    # newNode = Node()
-    # position and parent attribs
-    # Parent = Node()
-    # newNode.parent = newNode
-    # using the object of the next Point
-    # pass
-
 # function to return True if new Node isnt Present in any obstacle, 
 # else False
 def isNodeOkay(newNode):
@@ -63,18 +55,7 @@ def goalSampler(itr):
     pass
 
 # function to repeat procedure 5 times
-'''
-PROCEDURE:
-    choosing random point in given range
-
-    convert point into node using class, pass parent and new node
-    checking if it lies inside given obstacle list
-    checking if line crosses any obstacle
-        adding it to path
-        traversing to start of 
-    plotting path
-'''
-def driver(n, start, goal, d):
+def driver(n, start, goal):
     plt.scatter(start.x, start.y, marker='x', color='yellow')
     plt.scatter(goal.x, goal.y, marker='x', color='green')
     # parent = Node()
@@ -94,10 +75,7 @@ def driver(n, start, goal, d):
         goalSampleCtr+=1
 
         # add class object here to sample nodes
-        '''
-        CODE FOR SELECTION OF RANDOM NODES
-        GOAL SAMPLED AFTER 20 ITERATIONS
-        '''
+        
         # sampling goal after 20 iterations
         if goalSampleCtr==20:
             (x, y) = (goal.x, goal.y)
@@ -127,8 +105,6 @@ def driver(n, start, goal, d):
                 prev = newNode
                 # adding node to List
                 path.append(newNode)
-                
-                
                 plt.scatter(newNode.x, newNode.y, s=1.1)
                 # print(path)
                 
@@ -167,6 +143,6 @@ plt.ylim(0, 11)
 # n = int(input('Enter number of Nodes: '))
 # D = float(input('Enter Max Distance between new node and Current Node: '))
 n = 200
-pathTrajectory = driver(n, start, goal, D)
+pathTrajectory = driver(n, start, goal)
 plotter(pathTrajectory)
 plt.show()
