@@ -1,5 +1,8 @@
 '''
 STAGE 3
+no max distance
+no closest node check
+no tree like structure
 '''
 import matplotlib.pyplot as plt
 # import shapely
@@ -93,10 +96,10 @@ def driver(n, start, goal, d):
         # add class object here to sample nodes
         '''
         CODE FOR SELECTION OF RANDOM NODES
-        GOAL SAMPLED AFTER 25 ITERATIONS
+        GOAL SAMPLED AFTER 20 ITERATIONS
         '''
-        # sampling goal after 25 iterations
-        if goalSampleCtr==25:
+        # sampling goal after 20 iterations
+        if goalSampleCtr==20:
             (x, y) = (goal.x, goal.y)
             # taking new node as the goal
             newNode = Point(x, y)
@@ -133,7 +136,7 @@ def driver(n, start, goal, d):
                     print(f'Goal Reached in {itr} iterations using {nodeCtr} nodes.')
                     return path
             
-        
+    print(f'Couldnt reach goal in {itr} iterations, using {nodeCtr} nodes')
     return path
 
 # global obstacles
@@ -161,8 +164,9 @@ goal = Point(10, 10)
 plt.xlim(0, 11)
 plt.ylim(0, 11)
 
-n = int(input('Enter number of Nodes: '))
-D = float(input('Enter Max Distance between new node and Current Node: '))
+# n = int(input('Enter number of Nodes: '))
+# D = float(input('Enter Max Distance between new node and Current Node: '))
+n = 200
 pathTrajectory = driver(n, start, goal, D)
 plotter(pathTrajectory)
 plt.show()
