@@ -65,18 +65,7 @@ def traverseBack(node):
         plt.plot([node.parent.x, node.x], [node.parent.y, node.y], color='green')
         # decrementing node, moving towards root
         node = node.parent
-
-'''
-PROCEDURE:
-    choosing random point in given range
-
-    convert point into node using class, pass parent and new node
-    checking if it lies inside given obstacle list
-    checking if line crosses any obstacle
-        adding it to path
-        traversing to start of 
-    plotting path
-'''
+        
 def driver(n, start, goal, d):
     plt.scatter(start.x, start.y, marker='x', color='yellow')
     plt.scatter(goal.x, goal.y, marker='x', color='green')
@@ -97,11 +86,6 @@ def driver(n, start, goal, d):
         # increment goal sample ctr to check if 20 iterations are complete
         goalSampleCtr+=1
 
-        # add class object here to sample nodes
-        '''
-        CODE FOR SELECTION OF RANDOM NODES
-        GOAL SAMPLED AFTER 20 ITERATIONS
-        '''
         # sampling goal after 20 iterations
         if goalSampleCtr==20:
             line = LineString([(prev.x, prev.y), (goal.x, goal.y)])
@@ -186,8 +170,7 @@ goal = Point(10, 10)
 plt.xlim(0, 11)
 plt.ylim(0, 11)
 
-n = int(input('Enter number of Nodes: '))
-D = float(input('Enter Max Distance between new node and Current Node: '))
+n = 2000
+D = 1
 driver(n, start, goal, D)
-# plotter(pathTrajectory)
 plt.show()
