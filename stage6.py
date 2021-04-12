@@ -255,12 +255,13 @@ def test_rrt():
     start = Point(1, 1)
     goal = Point(10, 10)
 
-    n = 2000 # define number of nodes
+    n = 3000 # define number of nodes
     D = 1 # define max distance between parent and child
     # n = int(input('number of Nodes: '))
     # D = float(input(' max distance between child and parent: '))
-    rrt(n, start, goal, D, obsList)
-    plt.show()
+    path = rrt(n, start, goal, D, obsList)
+    print(path)
+	plt.show()
 
 # calling main function
 test_rrt()
