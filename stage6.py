@@ -12,14 +12,8 @@ from shapely.geometry import LineString
 from shapely.geometry import Point
 from shapely.geometry import Polygon
 ''' 
-                    CLASS DEFINITION
+                    CLASS DEF
 '''
-'''
-for Tracking Tree and Path
-stores 2 things:
-    1. points position (type 'Point')
-    2. Parent node (by default None)
-''' 
 class Node:
     # for parent node
     parent = None
@@ -67,12 +61,12 @@ def pointonVectoratD(head, tail, d):
 # function that samples and returns goal after x iterations and
 # other times samples and returns nextPoint at distance d from currPoint
 def pointSampler(itr, currPoint, goal, d):
-    # if itr is multiple of 10 sample point within goal region (goal-10)
-    if itr%10==0:
+    # sample point within goal region (x, y = {8, 10}) after 10 iterations
+    if not itr%10:
         point = Point(random.uniform(8, 10), random.uniform(8, 10))
     else:
-        # if iterations are multiple of 15, sample goal 
-        if itr%15==0:
+        # sample goal after 15 iterations 
+        if not itr%15:
             point = Point(goal.x, goal.y)
         # sampling random point
         else:
@@ -85,7 +79,7 @@ def pointSampler(itr, currPoint, goal, d):
     return point
 
 # function to return distance between 2 points
-def distanceBetween(point1,point2):
+def distanceBetween(point1, point2):
      dist = math.sqrt((point2.x - point1.x)**2 + (point2.y - point1.y)**2)
      return dist
 
