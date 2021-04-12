@@ -1,7 +1,5 @@
 '''
-STAGE 6 
-- changed basic structure of while loop
-ERROR SOLVING
+STAGE 6
 '''
 '''
             		IMPORT STATEMENTS
@@ -36,9 +34,6 @@ class Node:
 '''
             		FUNCTION DEFINITIONS
 '''
-'''
-                    STATUS - WORKING
-'''
 # function to return True if randomPoint isnt present in any obstacle, 
 def isPointOkay(randomPoint, obsList):
     isOkay = True
@@ -50,9 +45,7 @@ def isPointOkay(randomPoint, obsList):
             return isOkay
 
     return isOkay
-'''
-                    STATUS - WORKING
-'''
+
 # function to return True if line doesnt cross any obstacle
 def isLineOkay(line, obsList):
     isOkay = True
@@ -64,9 +57,7 @@ def isLineOkay(line, obsList):
             return isOkay
 
     return isOkay
-'''
-                    STATUS - WORKING
-'''
+
 # function to return point at distance d from head towards tail
 def pointonVectoratD(head, tail, d):
     (b,a) = (np.array(head, dtype=float), np.array(tail, dtype=float))
@@ -75,44 +66,32 @@ def pointonVectoratD(head, tail, d):
     point = b - d * n
     # returning point of type Point 
     return Point(point)
-'''
-                    STATUS - WORKING
-'''
+
 # function that samples and returns goal after x iterations and
 # other times samples and returns nextPoint at distance d from currPoint
-def pointSampler(goalSampleCtr, currPoint, goal, d):
-    # goalSampleCtr is x, sampling goal 
-    if goalSampleCtr==15:
-        # 
-        point = Point(goal.x, goal.y)
-        print('using goal')
-    # sampling random point
+def pointSampler(itr, currPoint, goal, d):
+    # if itr is multiple of 10 sample point within goal region (goal-10)
+    if itr%10==0:
+        point = Point(random.uniform(9, 10), random.uniform(9, 10))
+        print('using goal region')
     else:
-        # taking random point
-        point = Point(random.uniform(0, 10), random.uniform(0, 10))
-        # updating point as a point on distance d in same direction
-        point = pointonVectoratD(currPoint, point, d)
+        # if iterations are multiple of 15, sample goal 
+        if itr%15==0:
+            point = Point(goal.x, goal.y)
+            print('using goal')
+        # sampling random point
+        else:
+            # taking random point
+            point = Point(random.uniform(0, 10), random.uniform(0, 10))
+            # updating point as a point on distance d in same direction
+            point = pointonVectoratD(currPoint, point, d)
     return point
-'''
-                    STATUS - WORKING
-'''
+
 # function to return distance between 2 points
 def distanceBetween(point1,point2):
      dist = math.sqrt((point2.x - point1.x)**2 + (point2.y - point1.y)**2)
      return dist
-'''
-                    STATUS - PENDING
-'''
-'''
-    PROCEDURE:
-    1. we have the newPoint, we have the starting point, currNode and obsList
-    2. let leastDis = distance between currNode.position and newPoint
-    3. let tempNode = currNode
-    4. while tempNode.position!=start
-    5. distance should be less than leastDist and isLineOkay = True
-    6. if follows, then store as closestNode, let new leastDist be this, keep updating
-    7. at end return this
-'''
+
 # function to return node at least distance from point in tree
 # traversing from start till position is null
 def minDistNode(newPoint, start, currNode, obsList):
@@ -134,32 +113,27 @@ def minDistNode(newPoint, start, currNode, obsList):
                 leastDist = distanceBetween(tempNode.position, newPoint)
                 # updating closestNode
                 closestNode = tempNode
-                print('closestNode: ', closestNode.position, closestNode.parent)
         # traversing towards the root
         tempNode = tempNode.parent
     # returning closestNode to newPoint
     return closestNode
-'''
-                    STATUS - PENDING
-'''
+
 # function to traverse back to root of tree, plot and return path
-def visualize(node, start, path):
+def visualize(endNode, start):
+    tempNode = endNode
     # to store the final path
     path = []
     path.append(start)
     # while we havent reached the root of tree
-    while node.parent!=None:
+    while tempNode.parent!=None:
         # adding point to path
-        path.append(node.position)
-        # plot line segments joining node and its Parent
-        plt.plot([node.parent.x, node.x], [node.parent.y, node.y], color='green')
-        # print(node.parent, cdnode.position)
+        path.append(tempNode.position)
+        # plotting the Path
+        plt.plot([tempNode.parent.position.x, tempNode.position.x], [tempNode.parent.position.y, tempNode.position.y], color='green', linewidth=2)
         # decrementing node, moving towards root
-        node = node.parent
+        tempNode = tempNode.parent
     return path
-'''
-                    STATUS - PENDING
-'''
+
 # function to implement rrt algorithm
 def rrt(n, start, goal, d, obsList):
 	# plotting Start and Goal
@@ -174,25 +148,14 @@ def rrt(n, start, goal, d, obsList):
     nodeCtr=0
     # counter for number of iterations
     itr=0
-    # counter for goal sampling (resets after 15)
-    goalSampleCtr = 0
-    '''
-        PROCEDURE:
-        1. update goalSampleCtr, itr
-        2. get a newPoint from pointSampler()
-        3. check if it lies in obstacle
-        4. check if line crosses any obstacle
-        5. find closest node in tree to newPoint 
-        6. get position of closestNode, plot line and point
-        7. add point to tree, update variables
-    '''
+    
     # while n nodes havent been placed
     while nodeCtr<n:
         # incrementing iterations and goalSampleCtr
-        (itr, goalSampleCtr) = (itr+1, goalSampleCtr+1)
+        itr+=1
         # function returns either the goal or a random point at distance d
         # nextPoint updates to newPoint if newPoint follows conditions
-        newPoint = pointSampler(goalSampleCtr, currPoint, goal, d)
+        newPoint = pointSampler(itr, currPoint, goal, d)
         # if point lies inside obstacle continue
         if not isPointOkay(newPoint, obsList):
             continue
@@ -206,16 +169,17 @@ def rrt(n, start, goal, d, obsList):
         # line connecting currPoint to newPoint
         line = LineString([(currPoint), (newPoint)]) # not needed?
         # plot line segment
-        plt.plot([currPoint.x, newPoint.x], [currPoint.y, newPoint.y], color='red', linewidth=2)
+        plt.plot([currPoint.x, newPoint.x], [currPoint.y, newPoint.y], color='red', linewidth=0.5)
         # plot newPoint
-        plt.scatter(newPoint.x, newPoint.y, s=1.1, marker='*', color = 'black')
+        plt.scatter(newPoint.x, newPoint.y, s=1, color = 'black')
+        print(newPoint)
         # adding newPoint as newNode to tree
         newNode = Node(newPoint)
         # setting closestNode as newNodes parent
         newNode.parent = closestNode
         currNode = newNode
         # updating currNode as newNode
-        # currNode = newNode # do i need this?
+        currNode = newNode # do i need this?
         # updating currPoint as newPoint
         currPoint = newPoint
         # updating number of nodes
@@ -225,12 +189,12 @@ def rrt(n, start, goal, d, obsList):
             print(f'Goal reached!\nIterations: {itr},\nNodes: {nodeCtr}\n')
             print('Traversing Path.')
             path = visualize(currNode, start)
-            return path
+            print('Path Taken:')
+            for i in path:
+                print(f'({i.x}, {i.y})')
     # if goal isnt reached and while loop terminates normally
     print(f'\nCouldnt Reach Goal in iterations: {itr}, nodes: {nodeCtr}')
-'''
-                    WORKING
-'''
+
 # driver function to run rrt(), visualize()
 def test_rrt():
     # setting range of graph
@@ -255,13 +219,10 @@ def test_rrt():
     start = Point(1, 1)
     goal = Point(10, 10)
 
-    n = 3000 # define number of nodes
+    n = 7000 # define number of nodes
     D = 1 # define max distance between parent and child
-    # n = int(input('number of Nodes: '))
-    # D = float(input(' max distance between child and parent: '))
-    path = rrt(n, start, goal, D, obsList)
-    print(path)
-	plt.show()
+    rrt(n, start, goal, D, obsList)
+    plt.show()
 
 # calling main function
 test_rrt()
