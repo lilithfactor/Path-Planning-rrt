@@ -1,7 +1,7 @@
 '''
 STAGE 6 
 - changed basic structure of while loop
-ERROR SOLVING - no tree like structure
+ERROR SOLVING
 '''
 '''
             		IMPORT STATEMENTS
