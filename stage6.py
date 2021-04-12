@@ -1,5 +1,5 @@
 '''
-STAGE 6
+STAGE 6 
 '''
 '''
             		IMPORT STATEMENTS
@@ -11,7 +11,6 @@ import random
 from shapely.geometry import LineString
 from shapely.geometry import Point
 from shapely.geometry import Polygon
-
 ''' 
                     CLASS DEFINITION
 '''
@@ -23,7 +22,6 @@ stores 2 things:
 ''' 
 class Node:
     # for parent node
-    # parent = Point(1, 1)
     parent = None
     # for position of random point (child)
     position = None
@@ -43,7 +41,6 @@ def isPointOkay(randomPoint, obsList):
         if randomPoint.within(obs):
             isOkay = False
             return isOkay
-
     return isOkay
 
 # function to return True if line doesnt cross any obstacle
@@ -72,19 +69,19 @@ def pointonVectoratD(head, tail, d):
 def pointSampler(itr, currPoint, goal, d):
     # if itr is multiple of 10 sample point within goal region (goal-10)
     if itr%10==0:
-        point = Point(random.uniform(9, 10), random.uniform(9, 10))
-        print('using goal region')
+        point = Point(random.uniform(8, 10), random.uniform(8, 10))
     else:
         # if iterations are multiple of 15, sample goal 
         if itr%15==0:
             point = Point(goal.x, goal.y)
-            print('using goal')
         # sampling random point
         else:
             # taking random point
             point = Point(random.uniform(0, 10), random.uniform(0, 10))
-            # updating point as a point on distance d in same direction
-            point = pointonVectoratD(currPoint, point, d)
+            # if distance between point is greater than d then get point at distance d
+            if distanceBetween(point, currPoint)>d:
+                # updating point as a point on distance d in same direction
+                point = pointonVectoratD(currPoint, point, d)
     return point
 
 # function to return distance between 2 points
@@ -115,6 +112,8 @@ def minDistNode(newPoint, start, currNode, obsList):
                 closestNode = tempNode
         # traversing towards the root
         tempNode = tempNode.parent
+    # plotting branch with different color
+    plt.plot([closestNode.position.x, newPoint.x], [closestNode.position.y, newPoint.y], color='orange', linewidth=1.2)
     # returning closestNode to newPoint
     return closestNode
 
@@ -123,7 +122,6 @@ def visualize(endNode, start):
     tempNode = endNode
     # to store the final path
     path = []
-    path.append(start)
     # while we havent reached the root of tree
     while tempNode.parent!=None:
         # adding point to path
@@ -137,7 +135,7 @@ def visualize(endNode, start):
 # function to implement rrt algorithm
 def rrt(n, start, goal, d, obsList):
 	# plotting Start and Goal
-    plt.scatter(start.x, start.y, marker='x', color='yellow')
+    plt.scatter(start.x, start.y, marker='x', color='green')
     plt.scatter(goal.x, goal.y, marker='x', color='green')
     # adding first node to the tree, currNode
     # parent of first node will be None
@@ -151,6 +149,9 @@ def rrt(n, start, goal, d, obsList):
     
     # while n nodes havent been placed
     while nodeCtr<n:
+        # to track range explored
+        maxX = -1
+        maxY = -1
         # incrementing iterations and goalSampleCtr
         itr+=1
         # function returns either the goal or a random point at distance d
@@ -172,7 +173,10 @@ def rrt(n, start, goal, d, obsList):
         plt.plot([currPoint.x, newPoint.x], [currPoint.y, newPoint.y], color='red', linewidth=0.5)
         # plot newPoint
         plt.scatter(newPoint.x, newPoint.y, s=1, color = 'black')
-        print(newPoint)
+        if newPoint.x>maxX:
+            maxX = newPoint.x
+        if newPoint.y>maxY:
+            maxY = newPoint.y
         # adding newPoint as newNode to tree
         newNode = Node(newPoint)
         # setting closestNode as newNodes parent
@@ -186,14 +190,23 @@ def rrt(n, start, goal, d, obsList):
         nodeCtr+=1
         # goal check
         if newPoint==goal:
+            print('\n==================================================\n')
             print(f'Goal reached!\nIterations: {itr},\nNodes: {nodeCtr}\n')
+            print('\n==================================================\n')
             print('Traversing Path.')
             path = visualize(currNode, start)
-            print('Path Taken:')
+            path.append(start)
+            print('Path:\n')
             for i in path:
                 print(f'({i.x}, {i.y})')
-    # if goal isnt reached and while loop terminates normally
-    print(f'\nCouldnt Reach Goal in iterations: {itr}, nodes: {nodeCtr}')
+            print('\n==================================================\n')
+            return path
+    print('\n==================================================\n')
+    # if goal isnt reached 
+    print(f'\nCouldnt Reach Goal.\nIterations: {itr}\nnodes: {nodeCtr}\n')
+    print('\n==================================================\n')
+    print(f'\nRange Explored:\nx: ({0, maxX}), \ny: ({0, maxY:})\n')
+    print('\n==================================================\n')
 
 # driver function to run rrt(), visualize()
 def test_rrt():
@@ -212,16 +225,17 @@ def test_rrt():
     obsList = []
     for obs in obstacle_list:
         # plotting obstacles
-        plt.plot(*Polygon(obs).exterior.xy)
+        plt.plot(*Polygon(obs).exterior.xy, color='black')
         obsList.append(Polygon(obs));
 
     # start point and goal point
     start = Point(1, 1)
     goal = Point(10, 10)
 
-    n = 7000 # define number of nodes
+    n = 5000 # define number of nodes
     D = 1 # define max distance between parent and child
-    rrt(n, start, goal, D, obsList)
+    path = rrt(n, start, goal, D, obsList)
+    # print(path)
     plt.show()
 
 # calling main function
